@@ -1,39 +1,73 @@
 # include "sort.h"
 
-void partition(int *array, size_t lb, size_t ub, size_t size)
+/**
+ * swap_values - swaps the values inside two variables
+ * @x: pointer to the first value
+ * @y: pointer to the second value
+ */
+void swap_values(int *x, int *y)
 {
-	int pivot = array[lb], temp;
-	size_t start = lb;
-	size_t end = ub;
+	int tmp;
 
-	if(lb == ub)
-		return;
-	while (start < end)
+	tmp = *x;
+	*x = *y;
+	*y = tmp;
+}
+
+/**
+ * partition - splits the array into two partitions
+ * @array: the array to be partitioned
+ * @lb: the lower bound
+ * @ub: the upper bound
+ * @size: the size
+ * Return: pivot
+ */
+int partition(int *array, int lb, int ub, size_t size)
+{
+	int pivot = array[ub];
+	int x = lb - 1, y;
+
+	for (y = lb; y <= ub; y++)
 	{
-		while (array[start] <= pivot)
-			start++;
-		while (array[end] > pivot)
-			end--;
-
-		if (start < end)
+		if (array[y] <= pivot)
 		{
-			temp = array[end];
-			array[end] = array[start];
-			array[start] = temp;
-			print_array(array, size);
+			x++;
+			if (x != y)
+			{
+				swap_values(&array[x], &array[y]);
+				print_array(array, size);
+			}
 		}
 	}
-	array[lb] = array[end];
-	array[end] = pivot;
-	print_array(array, size);
-	
-	if (end > lb + 1)
-		partition(array, lb, end - 1, size);
-	if (end + 1 < ub)
-		partition(array, end + 1, ub, size);
-
+	return (x);
 }
+
+/**
+ * quick_sort_recursive - sorts the array using recursion
+ * @array: the array to be sorted
+ * @lb: the lowerbound index
+ * @ub: the upperbound index
+ * @size: size of the array
+ */
+void quick_sort_recursive(int *array, int lb, int ub, size_t size)
+{
+	int pivot;
+
+	if (lb < ub)
+	{
+		pivot = partition(array, lb, ub, size);
+		quick_sort_recursive(array, lb, pivot - 1, size);
+		quick_sort_recursive(array, pivot + 1, ub, size);
+	}
+}
+
+/**
+ * quick_sort - sorts an array using the quick sort algorithm
+ * @array: the array to be sorted
+ * @size: the size of the array
+ */
 void quick_sort(int *array, size_t size)
 {
-	partition(array, 0, (size - 1), size);
+	quick_sort_recursive(array, 0, size - 1, size);
 }
+
